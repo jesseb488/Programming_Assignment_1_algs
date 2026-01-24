@@ -68,3 +68,65 @@ def build_student_rank(n, student_preferences):
     return student_rank
 
 
+def print_matchings(n, match_h):
+    h = 1
+    while h <= n:
+        print(str(h) + " " + str(match_h[h]))
+        h += 1
+
+
+def gale_shapley(n, hospital_preferences, student_rank):
+    match_h = [0] * (n + 1)
+    match_s = [0] * (n + 1)
+    next_option = [0] * (n + 1)
+
+    free_hospitals = []
+    h = 1
+    while h <= n:
+        free_hospitals.append(h)
+        h += 1
+
+    i = 0
+    while i < len(free_hospitals):
+        h = free_hospitals[i]
+        i += 1
+
+        if next_option[h] >= n:
+            continue
+
+        s = hospital_preferences[h - 1][next_option[h]]
+        next_option[h] += 1
+
+        if match_s[s] == 0:
+            match_h[h] = s
+            match_s[s] = h
+        else:
+            current_h = match_s[s]
+            if student_rank[s][h] < student_rank[s][current_h]:
+                match_h[h] = s
+                match_s[s] = h
+                match_h[current_h] = 0
+                free_hospitals.append(current_h)
+            else:
+                if next_option[h] < n:
+                    free_hospitals.append(h)
+
+    return match_h
+
+def main():
+    if len(sys.argv) !=2:
+        print("Incorrect input, usage: python src/matcher.py <input file>")
+        return
+    
+    path = sys.argv[1]
+    tokens = read_tokens(path)
+    n, hospital_preferences, student_preferences = parse_instance(tokens)
+
+    if n == 0:
+        return
+    
+    student_rank = build_student_rank(n, student_preferences)
+    match_h = gale_shapley(n, hospital_preferences, student_rank)
+    print_matchings(n, match_h)
+
+main()
