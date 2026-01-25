@@ -114,19 +114,27 @@ def gale_shapley(n, hospital_preferences, student_rank):
     return match_h
 
 def main():
-    if len(sys.argv) !=2:
-        print("Incorrect input, usage: python src/matcher.py <input file>")
-        return
-    
-    path = sys.argv[1]
-    tokens = read_tokens(path)
-    n, hospital_preferences, student_preferences = parse_instance(tokens)
+    try:
+        if len(sys.argv) !=2:
+            print("Incorrect input, usage: python src/matcher.py <input file>")
+            return
+        
+        path = sys.argv[1]
+        tokens = read_tokens(path)
+        n, hospital_preferences, student_preferences = parse_instance(tokens)
 
-    if n == 0:
-        return
-    
-    student_rank = build_student_rank(n, student_preferences)
-    match_h = gale_shapley(n, hospital_preferences, student_rank)
-    print_matchings(n, match_h)
 
-main()
+        if n == 0:
+            return
+        
+        student_rank = build_student_rank(n, student_preferences)
+        match_h = gale_shapley(n, hospital_preferences, student_rank)
+        print_matchings(n, match_h)
+    
+    except Exception as e:
+        print("Error:", e)
+        return
+
+
+if __name__ == "__main__":
+    main()
