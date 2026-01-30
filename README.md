@@ -83,6 +83,7 @@ Next n lines: hospital preference lists
 Next n lines: student preference lists
 
 Example (data/example.in):
+
 3
 
 1 2 3
