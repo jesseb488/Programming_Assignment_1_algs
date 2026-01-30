@@ -40,9 +40,6 @@ def run_benchmark():
     matcher_times = []
     verifier_times = []
 
-    print("Running benchmarks\n")
-    print("n\t\tMatcher\tVerifier")
-    print("-" * 45)
     for n in sizes:
         # Generate random input
         input_content = generate_random_input(n)
@@ -70,20 +67,39 @@ def run_benchmark():
         end = time.time()
         verifier_time = end - start
         verifier_times.append(verifier_time)
-        
-        # Print result
-        print(str(n) + "\t\t" + str(round(matcher_time, 6)) + "\t" + str(round(verifier_time, 6)))
-        
-        # Verify the matching correct
-        if not success:
-            print("WARNING: Matching failed verification for n=" + str(n) + ": " + message)
     
     os.remove(input_path)
     
-    print("\nBenchmark complete")
+    return sizes, matcher_times, verifier_times
+
+def create_graph(sizes, matcher_times, verifier_times):
+    try:
+        import matplotlib.pyplot as plt
+        
+        plt.figure(figsize=(10, 6))
+        plt.plot(sizes, matcher_times, marker='o', label='Matcher')
+        plt.plot(sizes, verifier_times, marker='s', label='Verifier')
+        
+        plt.xlabel('n (number of hospitals/students)')
+        plt.ylabel('Running Time (seconds)')
+        plt.title('Gale-Shapley Matcher and Verifier Performance')
+        plt.legend()
+        plt.grid(True)
+        plt.xscale('log', base=2)
+        plt.ticklabel_format(axis='y', style='plain', useOffset=False)
+        plt.gca().yaxis.set_major_formatter(plt.FormatStrFormatter('%.6f'))
+        
+        plt.savefig('benchmark_graph.png')
+        print("\n**************************************************")
+        print("Graph saved to benchmark_graph.png (In SRC Folder)")
+        print("**************************************************")
+        
+    except ImportError:
+        print("matplotlib not installed. Run: pip install matplotlib")
 
 def main():
-    run_benchmark()
+    sizes, matcher_times, verifier_times = run_benchmark()
+    create_graph(sizes, matcher_times, verifier_times)
 
 if __name__ == "__main__":
     main()
